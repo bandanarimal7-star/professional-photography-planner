@@ -23,12 +23,12 @@ Contribution: I will implement weather API integration and handle data processin
 
 ## Pritam Khadka
 Role: UI/UX Designer
-GitHub: pritam-username
+GitHub: pritamkhadka76-dot
 Contribution: I will create wireframes and design the user workflow for selecting location, viewing weather data, and recommendations.
 
 ---
 
 ## Saugat Baral
 Role: Tester & Documentation Lead
-GitHub: saugat-username
+GitHub: saugatbrl
 Contribution: I will test features, report bugs, and maintain project documentation including README and sprint summaries.
