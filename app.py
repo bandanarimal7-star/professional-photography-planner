@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-API_KEY = "5e78c833e6e342ca97f04820261204"
+API_KEY = "09e18fba6aefd34c7444e92c34b1e832"
 
 def get_suitability(condition, wind_speed):
     condition = condition.lower()
