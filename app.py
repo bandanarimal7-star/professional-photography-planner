@@ -62,5 +62,8 @@ def hello():
 @app.route("/health")
 def health():
     return {"status": "healthy"}, 200
+    @app.errorhandler(404)
+def page_not_found(error):
+    return "Page not found", 404
 if __name__ == "__main__":
     app.run(debug=True)
