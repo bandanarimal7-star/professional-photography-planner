@@ -1,59 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Photography Planner</title>
+    <meta charset="UTF-8">
+    <title>Professional Photography Planner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
-<div class="container">
 
-    <h1>Photography Planner</h1>
-    <p class="subtitle">Search a city to check weather conditions for photography.</p>
+<div class="page-wrapper">
 
-    <form method="POST" class="search-form">
-        <div class="search-bar">
-            <span class="search-icon">🔍</span>
-            <input
-               type="text"
-               name="city"
-               placeholder="Search city..."
-               pattern="[A-Za-z ]+"
-               title="Only letters are allowed"
-               required>
-            <span class="location-icon">📍</span>
+    <header class="app-header">
+        <h1>📸 Professional Photography Planner</h1>
+        <p>Find the Best Time to Shoot</p>
+    </header>
+
+    <form method="POST" class="search-box" onsubmit="showLoading()">
+        <div class="input-wrapper">
+            <span>🔍</span>
+            <input type="text" name="city" placeholder="Search Australian city..." required>
+            <span>📍</span>
         </div>
 
-        <button type="submit" onclick="this.innerText='Checking Weather...'">
-            Check Photography Conditions
-        </button>
+        <button type="submit">Check Photography Conditions</button>
     </form>
 
-    {% if weather %}
-    <div class="success-message">
-    ✅ Weather information retrieved successfully!
-</div>
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <span>Checking weather conditions...</span>
+    </div>
 
-<div class="weather-card">
-        <h2>{{ weather.city }}</h2>
-
-        <div class="weather-details">
-            <p>🌡️ Temperature: {{ weather.temperature }}°C</p>
-            <p>☁️ Condition: {{ weather.condition }}</p>
-            <p>💧 Humidity: {{ weather.humidity }}%</p>
-            <p>💨 Wind Speed: {{ weather.wind_speed }} m/s</p>
-        </div>
-
-        <div class="suitability {{ weather.suitability.lower().replace(' ', '-') }}">
-            📷 Photography Suitability: {{ weather.suitability }}
-        </div>
+    {% if error %}
+    <div class="alert error">
+        ❌ {{ error }}
     </div>
     {% endif %}
 
-    {% if error %}
-        <p class="error">{{ error }}</p>
+    {% if weather %}
+    <div class="alert success">
+        ✅ Weather information retrieved successfully!
+    </div>
+
+    <section class="weather-card {{ weather.theme_class }}">
+
+        <div class="location-section">
+            <img src="{{ weather.icon_url }}" alt="Weather icon">
+            <div>
+                <h2>{{ weather.city }}, {{ weather.country }}</h2>
+                <p>{{ weather.time_icon }} {{ weather.time_period }}</p>
+            </div>
+        </div>
+
+        <div class="weather-grid">
+            <div class="info-card">
+                <span>🌡️</span>
+                <p>Temperature</p>
+                <h3>{{ weather.temp }}°C</h3>
+            </div>
+
+            <div class="info-card">
+                <span>☁️</span>
+                <p>Condition</p>
+                <h3>{{ weather.condition }}</h3>
+            </div>
+
+            <div class="info-card">
+                <span>🤗</span>
+                <p>Feels Like</p>
+                <h3>{{ weather.feels_like }}°C</h3>
+            </div>
+
+            <div class="info-card">
+                <span>💧</span>
+                <p>Humidity</p>
+                <h3>{{ weather.humidity }}%</h3>
+            </div>
+
+            <div class="info-card">
+                <span>💨</span>
+                <p>Wind Speed</p>
+                <h3>{{ weather.wind }} m/s</h3>
+            </div>
+
+            <div class="info-card">
+                <span>☀️</span>
+                <p>UV Index</p>
+                <h3>{{ weather.uv if weather.uv else "N/A" }}</h3>
+            </div>
+        </div>
+
+        <div class="rating-card {{ weather.rating|lower|replace(' ', '-') }}">
+            <h2>📷 Photography Suitability: {{ weather.rating }}</h2>
+        </div>
+
+        <div class="uv-card">
+            <h2>☀️ UV Recommendation</h2>
+            <p>{{ weather.uv_advice }}</p>
+        </div>
+
+        <div class="golden-card">
+            <h2>🌅 Best Photography Times</h2>
+
+            <div class="time-grid">
+                <div class="time-card">
+                    <h3>Sunrise</h3>
+                    <p>{{ weather.sunrise }}</p>
+                </div>
+
+                <div class="time-card">
+                    <h3>Sunset</h3>
+                    <p>{{ weather.sunset }}</p>
+                </div>
+
+                <div class="time-card">
+                    <h3>Morning Golden Hour</h3>
+                    <p>{{ weather.morning_golden }}</p>
+                </div>
+
+                <div class="time-card">
+                    <h3>Evening Golden Hour</h3>
+                    <p>{{ weather.evening_golden }}</p>
+                </div>
+
+                <div class="time-card">
+                    <h3>Morning Blue Hour</h3>
+                    <p>{{ weather.morning_blue }}</p>
+                </div>
+
+                <div class="time-card">
+                    <h3>Evening Blue Hour</h3>
+                    <p>{{ weather.evening_blue }}</p>
+                </div>
+            </div>
+        </div>
+
+    </section>
     {% endif %}
 
 </div>
+
+<script>
+function showLoading() {
+    document.getElementById("loading").style.display = "flex";
+}
+</script>
+
 </body>
 </html>
