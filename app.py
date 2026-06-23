@@ -1,4 +1,7 @@
 import os
+import os
+
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
 import re
 import requests
 from datetime import datetime, timedelta, timezone
