@@ -1,7 +1,8 @@
 import os
-import os
+from dotenv import load_dotenv
 
-API_KEY = os.getenv("OPENWEATHER_API_KEY")
+load_dotenv("/home/bandana07/professional-photography-planner-main/.env")
+
 import re
 import requests
 from datetime import datetime, timedelta, timezone
@@ -9,7 +10,7 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-OPENWEATHER_API_KEY = "16cbb45a0c4032115c3e4244ccbdd00f"
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 
 def clean_city(city):
@@ -134,6 +135,10 @@ def index():
             lon = data["coord"]["lon"]
 
             uv = get_uv_index(lat, lon)
+            rain_risk = "Low"
+
+            if condition.lower() in ["rain", "drizzle", "thunderstorm"]:
+               rain_risk = "High"
 
             sunrise_dt = datetime.fromtimestamp(sunrise, timezone.utc) + timedelta(seconds=timezone_offset)
             sunset_dt = datetime.fromtimestamp(sunset, timezone.utc) + timedelta(seconds=timezone_offset)
@@ -174,6 +179,7 @@ def index():
                 "evening_blue": evening_blue,
                 "rating": rating,
                 "uv": uv,
+                "rain_risk": rain_risk,
                 "uv_advice": uv_message,
                 "time_period": time_period,
                 "time_icon": time_icon,
