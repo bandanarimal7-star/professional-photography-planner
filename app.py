@@ -191,6 +191,10 @@ def index():
 
     return render_template("index.html", weather=weather, error=error)
 pip install werkzeug
+from werkzeug.security import generate_password_hash, check_password_hash
 
+password = generate_password_hash("mypassword")
+
+check_password_hash(password, "mypassword")
 if __name__ == "__main__":
     app.run(debug=True)
