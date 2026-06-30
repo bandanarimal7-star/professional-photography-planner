@@ -101,7 +101,8 @@ def photography_rating(temp, humidity, wind, condition, uv, time_period):
         return "Good"
 
     return "Fair"
-    @app.route("/register", methods=["GET", "POST"])
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
     message = None
 
