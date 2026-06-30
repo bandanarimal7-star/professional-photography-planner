@@ -6,9 +6,9 @@ load_dotenv("/home/bandana07/professional-photography-planner-main/.env")
 import re
 import requests
 from datetime import datetime, timedelta, timezone
-from flask import Flask, render_template, request
-from database import db
-
+from flask import Flask, render_template, request, redirect, url_for
+from database import db, User
+from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
@@ -101,6 +101,41 @@ def photography_rating(temp, humidity, wind, condition, uv, time_period):
         return "Good"
 
     return "Fair"
+    @app.route("/register", methods=["GET", "POST"])
+def register():
+    message = None
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        hashed_password = generate_password_hash(password)
+
+        user = User(username=username, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+
+        message = "User registered successfully."
+
+    return message or "Register page"
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    message = None
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and check_password_hash(user.password, password):
+            message = "Login successful."
+        else:
+            message = "Invalid username or password."
+
+    return message or "Login page"
 
 
 @app.route("/", methods=["GET", "POST"])
