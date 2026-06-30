@@ -196,5 +196,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 password = generate_password_hash("mypassword")
 
 check_password_hash(password, "mypassword")
+@app.route("/health")
+def health():
+    return {
+        "status":"healthy",
+        "application":"Photography Planner"
+    }
 if __name__ == "__main__":
     app.run(debug=True)
