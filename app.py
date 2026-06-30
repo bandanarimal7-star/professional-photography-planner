@@ -110,6 +110,11 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
 
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            message = "Username already exists."
+            return render_template("register.html", message=message)
+
         hashed_password = generate_password_hash(password)
 
         user = User(username=username, password=hashed_password)
@@ -117,9 +122,9 @@ def register():
         db.session.commit()
 
         message = "User registered successfully."
+        return render_template("login.html", message=message)
 
-    return message or "Register page"
-
+    return render_template("register.html", message=message)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -136,7 +141,7 @@ def login():
         else:
             message = "Invalid username or password."
 
-    return message or "Login page"
+    return render_template("login.html", message=message)
 
 
 @app.route("/", methods=["GET", "POST"])
