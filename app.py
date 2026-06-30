@@ -240,5 +240,12 @@ def index():
             error = "Something went wrong. Please check your API key or internet connection."
 
     return render_template("index.html", weather=weather, error=error)
+    @app.route("/health")
+def health():
+    return {
+        "status": "healthy",
+        "application": "Photography Planner",
+        "database": "connected"
+    }
 if __name__ == "__main__":
     app.run(debug=True)
