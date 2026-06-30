@@ -1,24 +1,23 @@
 import os
 from dotenv import load_dotenv
-
 load_dotenv("/home/bandana07/professional-photography-planner-main/.env")
-
 import re
 import requests
 from datetime import datetime, timedelta, timezone
-from flask import Flask, render_template, request
-
-app = Flask(__name__)
+from flask import Flask, render_template, 
 from database import db
-
+app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 db.init_app(app)
-
 with app.app_context():
     db.create_all()
-
+from database import db
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
+with app.app_context():
+    db.create_all()
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 
