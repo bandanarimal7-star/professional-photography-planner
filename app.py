@@ -9,6 +9,15 @@ from datetime import datetime, timedelta, timezone
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
+from database import db
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
@@ -190,17 +199,5 @@ def index():
             error = "Something went wrong. Please check your API key or internet connection."
 
     return render_template("index.html", weather=weather, error=error)
-pip install werkzeug
-from werkzeug.security import generate_password_hash, check_password_hash
-
-password = generate_password_hash("mypassword")
-
-check_password_hash(password, "mypassword")
-@app.route("/health")
-def health():
-    return {
-        "status":"healthy",
-        "application":"Photography Planner"
-    }
 if __name__ == "__main__":
     app.run(debug=True)
