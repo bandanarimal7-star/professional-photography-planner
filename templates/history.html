@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="auth-container">
+    <div class="auth-card favourites-card">
+
+        <h1>📷 Professional Photography Planner</h1>
+        <h2>🕒 Search History</h2>
+
+        <p class="auth-subtitle">
+            Your recent weather searches.
+        </p>
+
+        {% if history %}
+
+            {% for item in history %}
+
+            <div class="favourite-item">
+                <div>
+                    <h3>📍 {{ item[0] }}</h3>
+                    <p>Searched on {{ item[1] }}</p>
+                </div>
+
+                <div class="fav-actions">
+                    <a href="/?city={{ item[0] }}" class="small-btn">
+                        Check Again
+                    </a>
+                </div>
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p class="auth-subtitle">
+                No search history available.
+            </p>
+
+        {% endif %}
+
+        <a href="/" class="back-link">
+            ← Back to Home
+        </a>
+
+    </div>
+</div>
+
+</body>
+</html>
