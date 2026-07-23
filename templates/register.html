@@ -1,22 +1,88 @@
-templates/register.html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - PhotoPlan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body class="pro-login-theme">
 
-<h2>Create Account</h2>
+    <div class="logo-container">
+        <div class="logo-circle">📷</div>
+        <div class="logo-text">
+            <strong>PhotoPlan</strong><br>
+            <span>Professional Photography Planner</span>
+        </div>
+    </div>
 
-<form method="POST">
-    <label>Username</label><br>
-    <input type="text" name="username" required><br><br>
+    <div class="pro-glass-card register-card">
+        <div class="card-header photoplan-header">
+            <h2>Create your PhotoPlan account</h2>
+            <p>to explore different location for photography</p>
+        </div>
 
-    <label>Password</label><br>
-    <input type="password" name="password" required><br><br>
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
 
-    <button type="submit">Register</button>
-</form>
+        <form method="POST" action="/register" class="pro-form">
+
+            <div class="input-grid">
+                <div class="input-group">
+                    <span class="input-icon">👤</span>
+                    <input type="text" name="fullname" placeholder="Full name." required>
+                </div>
+                <div class="input-group">
+                    <span class="input-icon">✉️</span>
+                    <input type="email" name="email" placeholder="Email address." required>
+                </div>
+                <div class="input-group">
+                    <span class="input-icon">🪪</span>
+                    <input type="text" name="username" placeholder="Username." required>
+                </div>
+                <div class="input-group">
+                    <span class="input-icon">📞</span>
+                    <input type="tel" name="phone" placeholder="Phone number." required>
+                </div>
+                <div class="input-group">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" name="password" placeholder="Password." required>
+                    <span class="input-icon-right">👁️</span>
+                </div>
+                <div class="input-group">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" name="confirm_password" placeholder="Confirm password." required>
+                    <span class="input-icon-right">👁️</span>
+                </div>
+            </div>
+
+            <div class="checkbox-container">
+                <label class="custom-checkbox">
+                    <input type="checkbox" required>
+                    <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</span>
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span>Receive occasional product updates.</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-primary">Sign Up</button>
+
+            <div class="divider">
+                <span>or continue with</span>
+            </div>
+
+            <button type="button" class="btn-google solid-grey">
+                <span class="google-icon">G</span> Continue with Google
+            </button>
+        </form>
+
+        <div class="register-prompt photoplan-prompt">
+            Already have an account? <a href="/login">Log in.</a>
+        </div>
+    </div>
 
 </body>
 </html>
