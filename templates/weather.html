@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="{{ theme }}">
+
+    <!-- NEW WEATHER PAGE HEADER -->
+    <header class="weather-header">
+
+        <div class="weather-logo">
+            <span class="weather-logo-icon">📷</span>
+
+            <div class="weather-logo-text">
+                <strong>Professional</strong>
+                <span>Photography Planner</span>
+            </div>
+        </div>
+
+        <nav class="weather-glass-nav">
+
+            <a href="{{ url_for('index') }}" class="weather-nav-item active">
+                <span class="weather-nav-icon">🏠</span>
+                <span class="weather-nav-label">Home</span>
+            </a>
+
+            <a href="{{ url_for('favourites') }}" class="weather-nav-item">
+                <span class="weather-nav-icon">♡</span>
+                <span class="weather-nav-label">Favourites</span>
+            </a>
+
+            <a href="{{ url_for('history') }}" class="weather-nav-item">
+                <span class="weather-nav-icon">◷</span>
+                <span class="weather-nav-label">History</span>
+            </a>
+
+            <a href="{{ url_for('logout') }}" class="weather-nav-item">
+                <span class="weather-nav-icon">🚪</span>
+                <span class="weather-nav-label">Logout</span>
+            </a>
+
+        </nav>
+
+    </header>
+
+    <div class="page-wrapper">
+
+        {% if error %}
+            <div class="error-box">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        {% if weather %}
+
+        <section class="rating-card">
+
+    <div class="rating-main-row">
+
+        <div class="rating-left">
+
+            {% if weather.rating == "Excellent" %}
+                <span class="rating-icon excellent">✓</span>
+            {% elif weather.rating == "Good" %}
+                <span class="rating-icon good">✓</span>
+            {% elif weather.rating == "Fair" %}
+                <span class="rating-icon moderate">!</span>
+            {% else %}
+                <span class="rating-icon not-ideal">!</span>
+            {% endif %}
+
+            <div class="rating-text-group">
+                <div class="rating-heading-row">
+                    <span class="rating-title">Photography Suitability</span>
+                    <span class="rating-result">{{ weather.rating }}</span>
+                </div>
+
+                <hr class="rating-divider">
+
+                <p class="rating-description">
+                    {% if weather.rating == "Excellent" %}
+                        Ideal conditions for high-quality outdoor photography.
+                    {% elif weather.rating == "Good" %}
+                        Good conditions for photography with only minor limitations.
+                    {% elif weather.rating == "Fair" %}
+                        Photography is possible, but check the forecast and use suitable settings.
+                    {% else %}
+                        Outdoor photography may be difficult. Consider indoor alternatives or extra protection.
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+    <div class="weather-dashboard-row">
+
+        <section class="weather-card current-weather-card">
+
+            <h2 class="current-weather-heading">
+                {{ weather.time_icon }} Current Weather
+            </h2>
+
+            <div class="current-weather-layout">
+
+                <div class="current-weather-main">
+
+                    <img
+                        src="{{ weather.icon_url }}"
+                        alt="{{ weather.description }}"
+                        class="current-weather-icon"
+                    >
+
+                    <div class="current-temp">
+                        {{ weather.temp }}°C
+                    </div>
+
+                    <div class="current-condition">
+                        {{ weather.description }}
+                    </div>
+
+                    <div class="current-feels">
+                        Feels like {{ weather.feels_like }}°C
+                    </div>
+
+                </div>
+
+                <div class="current-weather-details">
+
+                    <div class="weather-detail-item">
+                        <span class="detail-label">💧 Humidity</span>
+                        <strong>{{ weather.humidity }}%</strong>
+                    </div>
+
+                    <div class="weather-detail-item">
+                        <span class="detail-label">💨 Wind</span>
+                        <strong>{{ weather.wind }} km/h</strong>
+                    </div>
+
+                    <div class="weather-detail-item">
+                        <span class="detail-label">🌧 Rain Risk</span>
+                        <strong>{{ weather.rain_risk }}%</strong>
+                    </div>
+
+                    <div class="weather-detail-item">
+                        <span class="detail-label">👁 Visibility</span>
+                        <strong>{{ weather.visibility }} km</strong>
+                    </div>
+
+                    <div class="weather-detail-item">
+                        <span class="detail-label">☀️ UV Index</span>
+                        <strong>
+                            {% if weather.uv is defined and weather.uv is not none %}
+                                {{ weather.uv }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="weather-detail-item">
+                        <span class="detail-label">⚖️ Pressure</span>
+                        <strong>
+                            {% if weather.pressure is defined and weather.pressure is not none %}
+                                {{ weather.pressure }} hPa
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="current-weather-footer">
+                <span>📍 {{ weather.city }}, {{ weather.country }}</span>
+
+                {% if weather.last_updated is defined %}
+                    <span>🕒 Updated: {{ weather.last_updated }}</span>
+                {% endif %}
+            </div>
+
+        </section>
+
+        <section class="weather-card photography-insight-card">
+            <h2>📸 Photography Insight</h2>
+
+            <h3>{{ weather.insight_overall }}</h3>
+
+            <div class="insight-section">
+                <h4>Why?</h4>
+                {% for item in weather.insight_why %}
+                    <p>✓ {{ item }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="insight-section">
+                <h4>📷 How to Get Better Photos</h4>
+                {% for item in weather.insight_best %}
+                    <p>• {{ item }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="insight-section">
+                <h4>🎒 Photographer Tips</h4>
+                {% for item in weather.insight_tips %}
+                    <p>• {{ item }}</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+        {% if forecast_48h %}
+        <section class="forecast-phone-card">
+            <h2>48-Hour Photography Forecast</h2>
+
+            <div class="hourly-scroll">
+                {% for hour in forecast_48h %}
+                <div class="hourly-item">
+                    <p>{{ hour.time }}</p>
+
+                    <img
+                        src="{{ hour.icon }}"
+                        alt="Weather condition"
+                        style="
+                            width: 60px !important;
+                            height: 60px !important;
+                            object-fit: contain;
+                            transform: scale(1.5);
+                        "
+                    >
+
+                    <h3>{{ hour.temp }}°</h3>
+
+                    <div style="
+                        font-size: 1rem;
+                        font-weight: bold;
+                        color: #7dd3fc;
+                        margin-bottom: 8px;
+                    ">
+                        💧 {{ hour.rain }}%
+                    </div>
+
+                    {% if hour.rating == "Excellent" %}
+                        <span class="status-dot excellent"></span>
+                    {% elif hour.rating == "Good" %}
+                        <span class="status-dot good"></span>
+                    {% elif hour.rating == "Fair" or hour.rating == "Moderate" %}
+                        <span class="status-dot moderate"></span>
+                    {% else %}
+                        <span class="status-dot not-ideal"></span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="forecast-footer">
+                <a href="https://weather.com/weather/hourbyhour" target="_blank">
+                    48-hour forecast ›
+                </a>
+            </div>
+
+        </section>
+        {% endif %}
+
+        {% if forecast_7d %}
+        <!-- 7-DAY FORECAST SECTION -->
+        <div
+            class="forecast-card weekly-forecast"
+            style="
+                background: rgba(0,0,0,0.4);
+                border-radius: 15px;
+                padding: 20px;
+                color: white;
+                margin-top: 20px;
+            "
+        >
+            <h3 style="
+                margin-top: 0;
+                margin-bottom: 20px;
+                font-size: 1.2rem;
+                font-weight: 600;
+            ">
+                7-Day Photography Outlook
+            </h3>
+
+            <div style="
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            ">
+                {% for f in forecast_7d %}
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    border-bottom: 1px solid rgba(255,255,255,0.1);
+                    padding-bottom: 10px;
+                ">
+
+                    <div style="
+                        flex: 2;
+                        font-weight: bold;
+                        font-size: 1.1rem;
+                    ">
+                        {{ f.day }}
+                    </div>
+
+                    <div style="
+                        flex: 1;
+                        text-align: center;
+                        font-size: 1rem;
+                        font-weight: bold;
+                        color: #7dd3fc;
+                    ">
+                        💧 {{ f.rain }}%
+                    </div>
+
+                    <div style="
+                        flex: 1;
+                        text-align: center;
+                    ">
+                        <img
+                            src="{{ f.icon }}"
+                            alt="Weather condition"
+                            style="
+                                width: 60px !important;
+                                height: 60px !important;
+                                object-fit: contain;
+                                transform: scale(1.5);
+                            "
+                        >
+                    </div>
+
+                    <div style="
+                        flex: 2;
+                        text-align: right;
+                        font-size: 1.1rem;
+                    ">
+                        <span style="font-weight: bold;">
+                            {{ f.max }}°
+                        </span>
+
+                        <span style="
+                            opacity: 0.6;
+                            margin-left: 10px;
+                        ">
+                            {{ f.min }}°
+                        </span>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <section class="weather-card">
+            <h2>📷 Photography Summary</h2>
+            <h3>{{ weather.summary_title }}</h3>
+            <p>{{ weather.summary_text }}</p>
+            <p><strong>Tip:</strong> {{ weather.summary_tip }}</p>
+        </section>
+
+        <section class="weather-card">
+            <h2>☀️ UV Recommendation</h2>
+            <p>{{ weather.uv_rec }}</p>
+        </section>
+
+        <section class="weather-card">
+            <h2>🌅 Best Photography Times</h2>
+
+            <div class="photo-time-grid">
+                <div>
+                    <h3>Sunrise</h3>
+                    <p>{{ weather.sunrise }}</p>
+                </div>
+
+                <div>
+                    <h3>Sunset</h3>
+                    <p>{{ weather.sunset }}</p>
+                </div>
+
+                <div>
+                    <h3>Morning Golden Hour</h3>
+                    <p>{{ weather.morning_golden }}</p>
+                </div>
+
+                <div>
+                    <h3>Evening Golden Hour</h3>
+                    <p>{{ weather.evening_golden }}</p>
+                </div>
+
+                <div>
+                    <h3>Morning Blue Hour</h3>
+                    <p>{{ weather.morning_blue }}</p>
+                </div>
+
+                <div>
+                    <h3>Evening Blue Hour</h3>
+                    <p>{{ weather.evening_blue }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="weather-card">
+            <h2>📷 Weather Alerts</h2>
+
+            {% for alert in weather.alerts %}
+                <p>{{ alert }}</p>
+            {% endfor %}
+        </section>
+
+        <!-- Advanced Environmental Data Card for Pros -->
+        <section class="weather-card logistics-card">
+            <h3 class="section-title">⚙️ Environmental Logistics</h3>
+
+            <div class="metrics-sub-list">
+
+                <div class="metric-row">
+                    <span>☁️ Total Cloud Cover:</span>
+                    <strong>{{ weather.clouds_percent }}%</strong>
+                </div>
+
+                <div class="metric-row">
+                    <span>👁️ Atmospheric Visibility:</span>
+                    <strong>{{ weather.visibility }} km</strong>
+                </div>
+
+                <div class="metric-row">
+                    <span>🧭 Compass Wind Velocity:</span>
+                    <strong>
+                        {{ weather.wind }} kph ({{ weather.wind_direction }})
+                    </strong>
+                </div>
+
+                <div class="metric-row">
+                    <span>🌊 Water Reflection Suitability:</span>
+                    <strong class="highlight-text">
+                        {{ weather.reflection_suitability }}
+                    </strong>
+                </div>
+
+                <div class="metric-row">
+                    <span>☀️ Solar UV Max Index:</span>
+                    <strong>
+                        {{ weather.uv if weather.uv is not none else 'N/A' }}
+                    </strong>
+                </div>
+
+                <div class="metric-row">
+                    <span>☀️ Sun Azimuth (Heading):</span>
+                    <strong>{{ weather.sun_azimuth }}°</strong>
+                </div>
+
+                <div class="metric-row">
+                    <span>📐 Sun Elevation Angle:</span>
+                    <strong>{{ weather.sun_elevation }}°</strong>
+                </div>
+
+                <div class="metric-row">
+                    <span>🌙 Current Moon Phase:</span>
+                    <strong>{{ weather.moon_phase }}</strong>
+                </div>
+
+            </div>
+        </section>
+
+        {% endif %}
+
+    </div>
+
+    <script>
+        function showLoading() {
+            const loadingElement = document.getElementById("loading");
+
+            if (loadingElement) {
+                loadingElement.style.display = "flex";
+            }
+        }
+    </script>
+
+</body>
+</html>
