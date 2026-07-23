@@ -2,148 +2,141 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Professional Photography Planner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Professional Photography Planner</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        .loading-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 1000;
+            flex-direction: column; justify-content: center; align-items: center; color: white;
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #FFB049;
+            border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .geo-btn-pro {
+            background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.5);
+            color: #111; padding: 10px 20px; border-radius: 20px; cursor: pointer;
+            margin-top: 15px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;
+            backdrop-filter: blur(10px); transition: 0.3s; font-size: 14px;
+        }
+        .geo-btn-pro:hover { background: rgba(255,255,255,0.5); }
+    </style>
 </head>
-<body>
+<body class="home-theme">
 
-<div class="page-wrapper">
+    <header class="home-header">
+        <div class="logo-container-nav">
+            <span class="logo-icon">📷</span>
+            <div class="logo-text">
+                <strong>Professional</strong><br>
+                <span>Photography Planner</span>
+            </div>
+        </div>
 
-    <header class="app-header">
-        <h1>📸 Professional Photography Planner</h1>
-        <p>Find the Best Time to Shoot</p>
+        <nav class="glass-nav">
+            <a href="/" class="nav-item active"><span class="nav-icon">🏠</span> Home</a>
+            <a href="/favourites" class="nav-item"><span class="nav-icon">♡</span> Favourites</a>
+            <a href="/history" class="nav-item"><span class="nav-icon">🕒</span> History</a>
+            <a href="/logout" class="nav-item"><span class="nav-icon">🚪</span> Logout</a>
+        </nav>
     </header>
 
-    <form method="POST" class="search-box" onsubmit="showLoading()">
-        <div class="input-wrapper">
-            <span>🔍</span>
-            <input type="text" name="city" placeholder="Search Australian city..." required>
-            <span>📍</span>
+    <main class="hero-section">
+        <div class="hero-icon">🌤️📷</div>
+        <h1 class="hero-title">Plan. Capture. Inspire.</h1>
+        <p class="hero-subtitle">Find the best time, perfect weather,<br>and golden light for unforgettable photos.</p>
+
+        {% if error %}
+            <div style="background: rgba(255,80,80,0.2); border: 1px solid rgba(255,80,80,0.4); color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 10px; margin-bottom: 15px;">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="/weather" class="search-form" onsubmit="showLoading()">
+            <div class="glass-search-container">
+                <span class="search-pin">📍</span>
+                <input type="text" name="city" placeholder="Search city or location..." required>
+                <button type="submit" class="search-btn">🔍</button>
+            </div>
+            
+            <button type="button" id="geo-btn" class="geo-btn-pro">
+                <span id="geo-status">📍 Use My Location</span>
+            </button>
+        </form>
+    </main>
+
+    <div class="features-wrapper">
+        <div class="glass-features-panel">
+            <div class="feature-item">
+                <div class="feature-icon text-yellow">☀️</div>
+                <div class="feature-text">
+                    <h4>Golden Hour</h4>
+                    <p>Find the best natural light</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon text-blue">☁️</div>
+                <div class="feature-text">
+                    <h4>Weather Forecast</h4>
+                    <p>Accurate forecasts for outdoor shoots</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon text-green">📷</div>
+                <div class="feature-text">
+                    <h4>Photo Tips</h4>
+                    <p>Tips & ideas to improve your shots</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon text-red">♡</div>
+                <div class="feature-text">
+                    <h4>Save Favourites</h4>
+                    <p>Keep your favourite locations handy</p>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <button type="submit">Check Photography Conditions</button>
-    </form>
-
-    <div id="loading" class="loading">
+    <div id="loading" class="loading-overlay">
         <div class="spinner"></div>
-        <span>Checking weather conditions...</span>
+        <span style="font-size: 18px; font-weight: bold;">Checking photography conditions...</span>
     </div>
 
-    {% if error %}
-    <div class="alert error">
-        ❌ {{ error }}
-    </div>
-    {% endif %}
+    <script>
+        function showLoading() {
+            document.getElementById("loading").style.display = "flex";
+        }
 
-    {% if weather %}
-    <div class="alert success">
-        ✅ Weather information retrieved successfully!
-    </div>
+        document.getElementById('geo-btn').addEventListener('click', () => {
+            const statusText = document.getElementById('geo-status');
 
-    <section class="weather-card {{ weather.theme_class }}">
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported by your browser.");
+                return;
+            }
 
-        <div class="location-section">
-            <img src="{{ weather.icon_url }}" alt="Weather icon">
-            <div>
-                <h2>{{ weather.city }}, {{ weather.country }}</h2>
-                <p>{{ weather.time_icon }} {{ weather.time_period }}</p>
-            </div>
-        </div>
+            statusText.innerHTML = "⏳ Locating...";
 
-        <div class="weather-grid">
-            <div class="info-card">
-                <span>🌡️</span>
-                <p>Temperature</p>
-                <h3>{{ weather.temp }}°C</h3>
-            </div>
-
-            <div class="info-card">
-                <span>☁️</span>
-                <p>Condition</p>
-                <h3>{{ weather.condition }}</h3>
-            </div>
-
-            <div class="info-card">
-                <span>🤗</span>
-                <p>Feels Like</p>
-                <h3>{{ weather.feels_like }}°C</h3>
-            </div>
-
-            <div class="info-card">
-                <span>💧</span>
-                <p>Humidity</p>
-                <h3>{{ weather.humidity }}%</h3>
-            </div>
-
-            <div class="info-card">
-                <span>💨</span>
-                <p>Wind Speed</p>
-                <h3>{{ weather.wind }} m/s</h3>
-            </div>
-
-            <div class="info-card">
-                <span>☀️</span>
-                <p>UV Index</p>
-                <h3>{{ weather.uv if weather.uv else "N/A" }}</h3>
-            </div>
-        </div>
-
-        <div class="rating-card {{ weather.rating|lower|replace(' ', '-') }}">
-            <h2>📷 Photography Suitability: {{ weather.rating }}</h2>
-        </div>
-
-        <div class="uv-card">
-            <h2>☀️ UV Recommendation</h2>
-            <p>{{ weather.uv_advice }}</p>
-        </div>
-
-        <div class="golden-card">
-            <h2>🌅 Best Photography Times</h2>
-
-            <div class="time-grid">
-                <div class="time-card">
-                    <h3>Sunrise</h3>
-                    <p>{{ weather.sunrise }}</p>
-                </div>
-
-                <div class="time-card">
-                    <h3>Sunset</h3>
-                    <p>{{ weather.sunset }}</p>
-                </div>
-
-                <div class="time-card">
-                    <h3>Morning Golden Hour</h3>
-                    <p>{{ weather.morning_golden }}</p>
-                </div>
-
-                <div class="time-card">
-                    <h3>Evening Golden Hour</h3>
-                    <p>{{ weather.evening_golden }}</p>
-                </div>
-
-                <div class="time-card">
-                    <h3>Morning Blue Hour</h3>
-                    <p>{{ weather.morning_blue }}</p>
-                </div>
-
-                <div class="time-card">
-                    <h3>Evening Blue Hour</h3>
-                    <p>{{ weather.evening_blue }}</p>
-                </div>
-            </div>
-        </div>
-
-    </section>
-    {% endif %}
-
-</div>
-
-<script>
-function showLoading() {
-    document.getElementById("loading").style.display = "flex";
-}
-</script>
-
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    statusText.innerHTML = "✅ Found! Redirecting...";
+                    window.location.href = `/weather-by-coords?lat=${lat}&lon=${lon}`;
+                },
+                (error) => {
+                    statusText.innerHTML = "❌ Unable to locate";
+                    alert("Please enable location permissions in your browser bar.");
+                    console.error(error);
+                }
+            );
+        });
+    </script>
 </body>
 </html>
