@@ -1,21 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Professional Photography Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body class="pro-login-theme">
 
-<h2>Login</h2>
+    <div class="logo-container">
+        <span class="logo-icon">📷</span>
+        <div class="logo-text">
+            <strong>Professional</strong><br>
+            <span>Photography Planner</span>
+        </div>
+    </div>
 
-<form method="POST">
-    <label>Username</label><br>
-    <input type="text" name="username" required><br><br>
+    <div class="pro-glass-card">
+        <div class="card-header">
+            <div class="header-icon">📷</div>
+            <h2>Welcome Back</h2>
+            <p>Login to continue your journey</p>
+        </div>
 
-    <label>Password</label><br>
-    <input type="password" name="password" required><br><br>
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
 
-    <button type="submit">Login</button>
-</form>
+        <form method="POST" action="/login" class="pro-form">
+            <div class="input-group">
+                <span class="input-icon">✉️</span>
+                <input type="email" name="email" placeholder="Email address" required>
+            </div>
+
+            <div class="input-group">
+                <span class="input-icon">🔒</span>
+                <input type="password" name="password" placeholder="Password" required>
+                <span class="input-icon-right">👁️</span>
+            </div>
+
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember">
+                    <span>Remember me</span>
+                </label>
+                <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-primary">Login</button>
+
+            <div class="divider">
+                <span>or continue with</span>
+            </div>
+
+            <button type="button" class="btn-google">
+                <span class="google-icon">G</span> Continue with Google
+            </button>
+        </form>
+
+        <div class="register-prompt">
+            Don't have an account? <a href="/register">Register</a>
+        </div>
+    </div>
 
 </body>
 </html>
