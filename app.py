@@ -977,3 +977,39 @@ def weather_by_coords():
 
     except Exception:
         return redirect(url_for('weather_page', city="Sydney"))
+
+@app.route("/chatbot", methods=["POST"])
+def chatbot():
+    user_message = request.form.get("message", "").lower().strip()
+
+    if not user_message:
+        reply = "Please type a question."
+
+    elif "golden hour" in user_message:
+        reply = "Golden hour is shortly after sunrise and before sunset. It provides soft warm lighting."
+
+    elif "blue hour" in user_message:
+        reply = "Blue hour happens just before sunrise and after sunset. It creates beautiful blue tones."
+
+    elif "rain" in user_message:
+        reply = "Protect your camera with a rain cover and umbrella during rainy conditions."
+
+    elif "sunny" in user_message:
+        reply = "Sunny weather is great, but avoid harsh midday sunlight."
+
+    elif "cloudy" in user_message:
+        reply = "Cloudy weather provides soft natural light, ideal for portraits."
+
+    elif "wind" in user_message:
+        reply = "Use a tripod during windy conditions to reduce camera shake."
+
+    elif "night" in user_message:
+        reply = "Use a tripod and slower shutter speed for night photography."
+
+    elif "weather" in user_message:
+        reply = "Search a city to view weather, UV, golden hour and photography recommendations."
+
+    else:
+        reply = "I can answer questions about photography and weather."
+
+    return {"reply": reply}
