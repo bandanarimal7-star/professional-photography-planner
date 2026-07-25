@@ -477,6 +477,22 @@
         {% endif %}
 
     </div>
+        <div class="chatbot-box">
+        <h3>📷 Photography Chatbot</h3>
+
+        <div id="chatMessages" class="chat-messages">
+            <p><strong>Assistant:</strong> Hello! Ask me about photography or weather.</p>
+        </div>
+
+        <div class="chat-input">
+            <input
+                type="text"
+                id="chatInput"
+                placeholder="Ask about golden hour, rain or camera settings"
+            >
+            <button type="button" onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
 
     <script>
         function showLoading() {
@@ -485,6 +501,41 @@
             if (loadingElement) {
                 loadingElement.style.display = "flex";
             }
+        }
+
+                async function sendChatMessage() {
+            const input = document.getElementById("chatInput");
+            const messages = document.getElementById("chatMessages");
+            const message = input.value.trim();
+
+            if (!message) {
+                return;
+            }
+
+            messages.innerHTML +=
+                `<p><strong>You:</strong> ${message}</p>`;
+
+            input.value = "";
+
+            const formData = new FormData();
+            formData.append("message", message);
+
+            try {
+                const response = await fetch("/chatbot", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                messages.innerHTML +=
+                    `<p><strong>Assistant:</strong> ${data.reply}</p>`;
+            } catch (error) {
+                messages.innerHTML +=
+                    `<p><strong>Assistant:</strong> Sorry, something went wrong.</p>`;
+            }
+
+            messages.scrollTop = messages.scrollHeight;
         }
     </script>
 
