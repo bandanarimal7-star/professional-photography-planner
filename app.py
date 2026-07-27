@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv("/home/bandana07/professional-photography-planner-main/.env")
 
 import re
+import random
 import requests
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -983,33 +984,128 @@ def chatbot():
     user_message = request.form.get("message", "").lower().strip()
 
     if not user_message:
-        reply = "Please type a question."
+        return {"reply": "Please type a photography or weather question."}
 
-    elif "golden hour" in user_message:
-        reply = "Golden hour is shortly after sunrise and before sunset. It provides soft warm lighting."
+    responses = {
+        "greeting": [
+            "Hello! I am your photography assistant. How can I help?",
+            "Hi! Ask me about weather, golden hour or camera settings.",
+            "Welcome! I can help you plan your photography session."
+        ],
+        "golden_hour": [
+            "Golden hour is shortly after sunrise and before sunset. It provides warm and soft lighting.",
+            "Golden hour is ideal for portraits and landscape photography.",
+            "Use golden hour to avoid harsh shadows and create warmer colours."
+        ],
+        "blue_hour": [
+            "Blue hour occurs shortly before sunrise and shortly after sunset.",
+            "Blue hour creates cool blue tones and is excellent for city photography.",
+            "Use a tripod during blue hour because the available light is low."
+        ],
+        "rain": [
+            "Use a camera rain cover, lens hood and waterproof bag during rainy weather.",
+            "Rain can create reflections and dramatic photographs, but protect your equipment.",
+            "Use a fast shutter speed to freeze raindrops or a slower speed to create rain streaks."
+        ],
+        "cloudy": [
+            "Cloudy weather provides soft and even light, making it ideal for portraits.",
+            "Clouds work like a natural diffuser and reduce harsh shadows.",
+            "Cloudy conditions are useful for portrait, flower and product photography."
+        ],
+        "sunny": [
+            "Avoid harsh midday sunlight. Shoot early in the morning or late afternoon.",
+            "In bright sunlight, use a low ISO and faster shutter speed.",
+            "Use a lens hood or polarising filter to reduce glare."
+        ],
+        "wind": [
+            "Use a sturdy tripod and faster shutter speed during windy conditions.",
+            "Keep your tripod low and avoid extending its centre column.",
+            "Strong wind can affect drones, tripods and lightweight camera equipment."
+        ],
+        "night": [
+            "For night photography, use a tripod, low ISO and slower shutter speed.",
+            "Use manual focus and a wide aperture when photographing at night.",
+            "For city lights, try ISO 100, aperture f/8 and a long exposure."
+        ],
+        "portrait": [
+            "For portraits, use an aperture between f/1.8 and f/4 for background blur.",
+            "Cloudy weather and golden hour are excellent for portraits.",
+            "Focus on the subject's eyes and use a simple background."
+        ],
+        "landscape": [
+            "For landscapes, use an aperture around f/8 to f/11.",
+            "Use a tripod, low ISO and golden-hour lighting for landscapes.",
+            "Include a foreground object to create depth in landscape photographs."
+        ],
+        "iso": [
+            "Use ISO 100–200 in bright daylight and increase it in low light.",
+            "Higher ISO makes images brighter but may add digital noise.",
+            "Use the lowest ISO that still provides a suitable shutter speed."
+        ],
+        "aperture": [
+            "A low f-number such as f/1.8 creates a blurred background.",
+            "A higher f-number such as f/8 or f/11 keeps more of the image in focus.",
+            "Use a wide aperture for portraits and a smaller aperture for landscapes."
+        ],
+        "shutter": [
+            "Use a fast shutter speed to freeze movement and a slow speed to show motion.",
+            "Use around 1/500 second for action photography.",
+            "Use a tripod when using slow shutter speeds."
+        ],
+        "uv": [
+            "High UV often creates harsh light and strong shadows.",
+            "During high UV, photograph during golden hour and use sun protection.",
+            "A polarising filter can help reduce glare in bright outdoor conditions."
+        ]
+    }
 
-    elif "blue hour" in user_message:
-        reply = "Blue hour happens just before sunrise and after sunset. It creates beautiful blue tones."
+    intents = {
+        "greeting": ["hello", "hi", "hey", "good morning", "good evening"],
+        "golden_hour": ["golden hour", "best time", "sunrise", "sunset"],
+        "blue_hour": ["blue hour", "twilight"],
+        "rain": ["rain", "rainy", "storm", "drizzle"],
+        "cloudy": ["cloud", "cloudy", "overcast"],
+        "sunny": ["sunny", "sunlight", "bright sun"],
+        "wind": ["wind", "windy", "breeze"],
+        "night": ["night", "dark", "low light", "stars"],
+        "portrait": ["portrait", "person", "people", "face"],
+        "landscape": ["landscape", "mountain", "nature", "scenery"],
+        "iso": ["iso", "noise", "grain"],
+        "aperture": ["aperture", "f-stop", "f stop", "depth of field"],
+        "shutter": ["shutter", "motion blur", "freeze movement"],
+        "uv": ["uv", "ultraviolet", "sun protection"]
+    }
 
-    elif "rain" in user_message:
-        reply = "Protect your camera with a rain cover and umbrella during rainy conditions."
+    best_intent = None
+    highest_score = 0
 
-    elif "sunny" in user_message:
-        reply = "Sunny weather is great, but avoid harsh midday sunlight."
+    for intent, keywords in intents.items():
+        score = 0
 
-    elif "cloudy" in user_message:
-        reply = "Cloudy weather provides soft natural light, ideal for portraits."
+        for keyword in keywords:
+            if keyword in user_message:
+                score += 1
 
-    elif "wind" in user_message:
-        reply = "Use a tripod during windy conditions to reduce camera shake."
+        if score > highest_score:
+            highest_score = score
+            best_intent = intent
 
-    elif "night" in user_message:
-        reply = "Use a tripod and slower shutter speed for night photography."
+    if best_intent:
+        reply = random.choice(responses[best_intent])
 
-    elif "weather" in user_message:
-        reply = "Search a city to view weather, UV, golden hour and photography recommendations."
+    elif "help" in user_message or "what can you do" in user_message:
+        reply = (
+            "I can help with golden hour, blue hour, weather, portraits, "
+            "landscapes, ISO, aperture, shutter speed and night photography."
+        )
+
+    elif "thank" in user_message:
+        reply = "You're welcome! I hope you capture some great photographs."
 
     else:
-        reply = "I can answer questions about photography and weather."
+        reply = (
+            "I am not sure about that question. Try asking about golden hour, "
+            "weather, portraits, landscapes, ISO, aperture or shutter speed."
+        )
 
     return {"reply": reply}
