@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Photographer Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body class="client-dashboard-page">
+
+<div class="dashboard-layout">
+
+    <!-- Photographer Sidebar -->
+    <aside class="dashboard-sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-icon">📷</div>
+
+            <div>
+                <h2>PhotoPlanner</h2>
+                <p>Professional Photography Planner</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('photographer_dashboard') }}"
+               class="sidebar-link active">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <i class="fa-regular fa-calendar-check"></i>
+                Booking Requests
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <i class="fa-solid fa-camera-retro"></i>
+                My Portfolio
+            </a>
+
+            <a href="{{ url_for('index') }}" class="sidebar-link">
+                <i class="fa-solid fa-cloud-sun"></i>
+                Weather Planner
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <i class="fa-regular fa-message"></i>
+                Messages
+            </a>
+
+            <a href="{{ url_for('my_photographer_profile') }}" class="sidebar-link">
+                <i class="fa-regular fa-user"></i>
+                Profile
+            </a>
+
+        </nav>
+
+        <a href="{{ url_for('logout') }}"
+           class="sidebar-link sidebar-logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+    </aside>
+
+    <!-- Main Area -->
+    <div class="dashboard-main">
+
+        <!-- Top Bar -->
+        <header class="dashboard-topbar">
+
+            <div>
+                <h1>Welcome back, {{ photographer_name }}! 👋</h1>
+
+                <p class="topbar-subtitle">
+                    Manage your bookings, photography schedule and portfolio.
+                </p>
+            </div>
+
+            <div class="topbar-profile">
+
+                <div class="notification-wrapper">
+
+                    <button class="notification-btn" type="button">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+
+                </div>
+
+                <div class="profile-avatar">
+                    PH
+                </div>
+
+                <div class="profile-details">
+                    <h4>Photographer</h4>
+                    <p>Professional Account</p>
+                </div>
+
+                <i class="fa-solid fa-chevron-down profile-arrow"></i>
+
+            </div>
+
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="dashboard-content">
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+
+                <div class="summary-card">
+
+                    <div class="card-icon purple">
+                        <i class="fa-regular fa-calendar-plus"></i>
+                    </div>
+
+                    <div class="summary-card-info">
+                        <h3>Pending Requests</h3>
+                        <h2>{{ pending_count }}</h2>
+                        <p>Booking requests awaiting response</p>
+                    </div>
+
+                </div>
+
+                <div class="summary-card">
+
+                    <div class="card-icon orange">
+                        <i class="fa-regular fa-calendar-check"></i>
+                    </div>
+
+                    <div class="summary-card-info">
+                        <h3>Upcoming Shoots</h3>
+                        <h2>{{ upcoming_count }}</h2>
+                        <p>Confirmed photography sessions</p>
+                    </div>
+
+                </div>
+
+                <div class="summary-card">
+
+                    <div class="card-icon green">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+
+                    <div class="summary-card-info">
+                        <h3>Completed Jobs</h3>
+                        <h2>{{ completed_count }}</h2>
+                        <p>Completed photography sessions</p>
+                    </div>
+
+                </div>
+
+                <div class="summary-card">
+
+                    <div class="card-icon blue">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+
+                    <div class="summary-card-info">
+                        <h3>Average Rating</h3>
+                        <h2>—</h2>
+                        <p>No client reviews yet</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Dashboard Sections -->
+            <div class="dashboard-sections">
+
+                <!-- Booking Requests -->
+                <section class="upcoming-bookings-panel">
+
+                    <div class="panel-header">
+
+                        <div class="panel-title">
+                            <i class="fa-regular fa-calendar-plus"></i>
+                            <h2>Recent Booking Requests</h2>
+                        </div>
+
+                        <a href="#">View all</a>
+
+                    </div>
+
+                    {% if pending_requests %}
+
+                        <div class="dashboard-booking-list">
+
+                            {% for booking in pending_requests %}
+
+                            <div class="dashboard-booking-item">
+
+                                <div class="dashboard-booking-icon">
+                                    <i class="fa-solid fa-camera"></i>
+                                </div>
+
+                                <div class="dashboard-booking-details">
+
+                                    <div class="dashboard-booking-title-row">
+
+                                        <div>
+                                            <h3>
+                                                {{ booking["photography_type"]|replace("_", " ")|title }}
+                                            </h3>
+
+                                            <p>
+                                                Client: {{ booking["user_email"] }}
+                                            </p>
+                                        </div>
+
+                                        <span class="dashboard-booking-status">
+                                            {{ booking["status"] }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="dashboard-booking-info">
+
+                                        <span>
+                                            <i class="fa-regular fa-calendar"></i>
+                                            {{ booking["booking_date"] }}
+                                        </span>
+
+                                        <span>
+                                            <i class="fa-regular fa-clock"></i>
+                                            {{ booking["booking_time"] }}
+                                        </span>
+
+                                        <span>
+                                            <i class="fa-solid fa-location-dot"></i>
+                                            {{ booking["location"] }}
+                                        </span>
+
+                                    </div>
+
+                                    <p style="margin-top: 12px;">
+                                        <strong>Duration:</strong>
+                                        {{ booking["duration"] }} hour(s)
+                                    </p>
+
+                                    {% if booking["special_requests"] %}
+                                    <p>
+                                        <strong>Special request:</strong>
+                                        {{ booking["special_requests"] }}
+                                    </p>
+                                    {% endif %}
+
+                                    <div style="margin-top: 16px; display: flex; gap: 10px;">
+
+                                        <a href="{{ url_for('accept_booking', booking_id=booking['id']) }}"
+                                           class="book-photographer-btn">
+                                            Accept
+                                        </a>
+
+                                        <a href="{{ url_for('decline_booking', booking_id=booking['id']) }}"
+                                           class="book-photographer-btn">
+                                            Decline
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+    <div class="empty-booking-state">
+
+        <div class="empty-booking-icon">
+            <i class="fa-regular fa-calendar"></i>
+        </div>
+
+        <h3>No Booking Requests</h3>
+
+        <p>
+            New booking requests from clients will appear here.
+        </p>
+
+    </div>
+
+{% endif %}
+
+                </section>
+
+                <!-- Upcoming Shoot Weather -->
+                <section class="upcoming-weather-panel">
+
+                    <div class="panel-header">
+
+                        <div class="panel-title">
+                            <i class="fa-solid fa-cloud-sun"></i>
+                            <h2>Upcoming Shoot Weather</h2>
+                        </div>
+
+                        <a href="{{ url_for('index') }}">
+                            Open Weather Planner
+                        </a>
+
+                    </div>
+
+                    <div class="weather-panel-content">
+
+                        {% if next_shoot %}
+
+                            <div class="weather-overview-card">
+
+                                <div class="weather-main-info">
+
+                                    <p class="weather-location">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        {{ next_shoot["location"] }}
+                                    </p>
+
+                                    <p class="booking-weather-date">
+                                        <i class="fa-regular fa-calendar"></i>
+                                        {{ next_shoot["booking_date"] }}
+
+                                        <i class="fa-regular fa-clock"></i>
+                                        {{ next_shoot["booking_time"] }}
+                                    </p>
+
+                                    <h3>
+                                        {{ next_shoot["photography_type"]|replace("_", " ")|title }}
+                                    </h3>
+
+                                    <p class="weather-condition">
+                                        Confirmed upcoming shoot
+                                    </p>
+
+                                </div>
+
+                                <div class="weather-large-icon">
+                                    <i class="fa-solid fa-camera"></i>
+                                </div>
+
+                            </div>
+
+                            <div class="no-booking-weather-note">
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                <div>
+                                    <strong>Weather is available for this booking.</strong>
+
+                                    <p>
+                                        Open the full forecast to check expected rain, wind,
+                                        temperature and photography suitability.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <a
+                                href="{{ url_for(
+                                    'weather_page',
+                                    city=next_shoot['location'],
+                                    booking_date=next_shoot['booking_date'],
+                                    booking_time=next_shoot['booking_time']
+                                ) }}"
+                                class="book-photographer-btn"
+                                style="display: inline-block; margin-top: 16px;"
+                            >
+                                View Shoot Weather
+                            </a>
+
+                        {% else %}
+
+                            <div class="no-booking-weather-note">
+
+                                <i class="fa-solid fa-circle-info"></i>
+
+                                <div>
+                                    <strong>No upcoming shoot selected.</strong>
+
+                                    <p>
+                                        Weather information for confirmed photography
+                                        sessions will appear here.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <!-- Lower Sections -->
+            <div class="dashboard-lower-sections">
+
+                <section class="booking-history-panel">
+
+                    <div class="panel-header">
+
+                        <div class="panel-title">
+                            <i class="fa-regular fa-calendar-check"></i>
+                            <h2>Upcoming Shoots</h2>
+                        </div>
+
+                        <a href="#">View all</a>
+
+                    </div>
+
+                    {% if upcoming_shoots %}
+
+                        <div class="dashboard-booking-list">
+
+                            {% for booking in upcoming_shoots %}
+
+                            <div class="dashboard-booking-item">
+
+                                <div class="dashboard-booking-icon">
+                                    <i class="fa-solid fa-camera"></i>
+                                </div>
+
+                                <div class="dashboard-booking-details">
+
+                                    <div class="dashboard-booking-title-row">
+
+                                        <div>
+                                            <h3>
+                                                {{ booking["photography_type"]|replace("_", " ")|title }}
+                                            </h3>
+
+                                            <p>
+                                                Client: {{ booking["user_email"] }}
+                                            </p>
+                                        </div>
+
+                                        <span class="dashboard-booking-status">
+                                            {{ booking["status"] }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="dashboard-booking-info">
+
+                                        <span>
+                                            <i class="fa-regular fa-calendar"></i>
+                                            {{ booking["booking_date"] }}
+                                        </span>
+
+                                        <span>
+                                            <i class="fa-regular fa-clock"></i>
+                                            {{ booking["booking_time"] }}
+                                        </span>
+
+                                        <span>
+                                            <i class="fa-solid fa-location-dot"></i>
+                                            {{ booking["location"] }}
+                                        </span>
+
+                                    </div>
+
+                                    <p style="margin-top: 12px;">
+                                        <strong>Duration:</strong>
+                                        {{ booking["duration"] }} hour(s)
+                                    </p>
+
+                                    <a
+                                        href="{{ url_for(
+                                            'weather_page',
+                                            city=booking['location'],
+                                            booking_date=booking['booking_date'],
+                                            booking_time=booking['booking_time']
+                                        ) }}"
+                                        class="book-photographer-btn"
+                                        style="display: inline-block; margin-top: 14px;"
+                                    >
+                                        Check Shoot Weather
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty-history-state">
+
+                            <div class="empty-history-icon">
+                                <i class="fa-regular fa-calendar"></i>
+                            </div>
+
+                            <h3>No upcoming shoots</h3>
+
+                            <p>
+                                Accepted client bookings will appear here.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+                <div class="right-dashboard-column">
+
+                    <!-- Portfolio -->
+                    <section class="favourite-locations-panel">
+
+                        <div class="panel-header">
+
+                            <div class="panel-title">
+                                <i class="fa-solid fa-images"></i>
+                                <h2>My Portfolio</h2>
+                            </div>
+
+                            <a href="#">Manage</a>
+
+                        </div>
+
+                        <div class="dashboard-empty-favourites">
+
+                            <div class="dashboard-empty-favourite-icon">
+                                <i class="fa-regular fa-images"></i>
+                            </div>
+
+                            <h3>No Portfolio Images</h3>
+
+                            <p>
+                                Add your best photographs so clients can view your work.
+                            </p>
+
+                            <a href="#">
+                                Add Portfolio Image
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                    <!-- Quick Actions -->
+                    <section class="quick-actions-panel">
+
+                        <div class="panel-header">
+
+                            <div class="panel-title">
+                                <i class="fa-solid fa-bolt"></i>
+                                <h2>Quick Actions</h2>
+                            </div>
+
+                        </div>
+
+                        <div class="quick-actions-grid">
+
+                            <a href="#" class="quick-action-card">
+
+                                <div class="quick-action-icon purple-action">
+                                    <i class="fa-regular fa-calendar-check"></i>
+                                </div>
+
+                                <div>
+                                    <h4>Booking Requests</h4>
+                                    <p>Review client requests</p>
+                                </div>
+
+                            </a>
+
+                            <a href="{{ url_for('index') }}"
+                               class="quick-action-card">
+
+                                <div class="quick-action-icon green-action">
+                                    <i class="fa-solid fa-cloud-sun"></i>
+                                </div>
+
+                                <div>
+                                    <h4>Check Weather</h4>
+                                    <p>Plan an upcoming shoot</p>
+                                </div>
+
+                            </a>
+
+                            <a href="#" class="quick-action-card">
+
+                                <div class="quick-action-icon blue-action">
+                                    <i class="fa-solid fa-images"></i>
+                                </div>
+
+                                <div>
+                                    <h4>Update Portfolio</h4>
+                                    <p>Showcase your work</p>
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+</body>
+</html>
