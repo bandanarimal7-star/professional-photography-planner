@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Audit Activity</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f4f7fb; color: #1f2937; }
+        .container { width: min(1100px, 92%); margin: 40px auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
+        h1 { margin: 0; }
+        .back-link { text-decoration: none; background: #1f2937; color: white; padding: 10px 16px; border-radius: 8px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 14px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+        th { background: #eef2f7; }
+        .success { color: #087443; font-weight: bold; }
+        .failed { color: #b42318; font-weight: bold; }
+        .empty { padding: 30px; text-align: center; color: #6b7280; }
+        @media (max-width: 760px) {
+            .card { overflow-x: auto; }
+            table { min-width: 760px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div class="header">
+            <div>
+                <h1>My Audit Activity</h1>
+                <p>Recent security and account activity for your account.</p>
+            </div>
+            <a class="back-link" href="{{ url_for('index') }}">Back to Home</a>
+        </div>
+
+        <div class="card">
+            {% if logs %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date and time</th>
+                        <th>Action</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>IP address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log[4] }}</td>
+                        <td>{{ log[0].replace('_', ' ').title() }}</td>
+                        <td>{{ log[1] or '-' }}</td>
+                        <td class="{{ 'success' if log[2] == 'SUCCESS' else 'failed' }}">{{ log[2] }}</td>
+                        <td>{{ log[3] or 'Unknown' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">No audit activity has been recorded yet.</div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>
